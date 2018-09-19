@@ -1,5 +1,5 @@
 {
-    "name": "3f/converter",
+    "name": "mtawil/converter",
     "description": "A set of classes to translate a text from HTML to BBcode and from BBCode to Markdown.",
     "keywords": ["bbcode", "markdown", "html", "converter", "translator", "formatter"],
     "homepage": "https://github.com/dedalozzo/converter",
