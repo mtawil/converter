@@ -273,8 +273,16 @@ class BBCodeConverter extends Converter
             // Removes the inner quotes, leaving just one level.
             $text = preg_replace('~\G(?<!^)(?>(\[quote\b[^]]*](?>[^[]++|\[(?!/?quote)|(?1))*\[/quote])|(?<!\[)(?>[^[]++|\[(?!/?quote))+\K)|\[quote\b[^]]*]\K~i', '', $text);
 
-            // Replaces all the remaining quotes
-            $text = preg_replace('%\[quote\b[^]]*\]((?>[^[]++|\[(?!/?quote))*)\[/quote\]%i', '', $text);
+            // Replaces all the remaining quotes with '> ' characters.
+            $text = preg_replace_callback('%\[quote\b[^]]*\]((?>[^[]++|\[(?!/?quote))*)\[/quote\]%i',
+                function ($matches) {
+                    $quote = preg_replace('/^\s*/mu', '', trim($matches[1]));
+
+                    return '> '.$quote.PHP_EOL.PHP_EOL;
+                },
+
+                $text
+            );
 
             return $text;
         };
