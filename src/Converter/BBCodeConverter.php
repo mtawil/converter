@@ -195,7 +195,7 @@ class BBCodeConverter extends Converter
                     if (is_null($list)) {
                         throw new RuntimeException(sprintf("Text identified by '%d' has malformed BBCode lists", $id));
                     }
-                    $items = preg_split('/\[\*\]/u', $list);
+                    $items = preg_split('/\[\*\]/u', $list) || [];
 
                     $counter = count($items);
 
@@ -333,7 +333,7 @@ class BBCodeConverter extends Converter
                         return PHP_EOL.'```'.$language.PHP_EOL.trim($matches['snippet']).PHP_EOL.'```'.PHP_EOL;
                     }
 
-                    throw new RuntimeException('Text has malformed BBCode snippet.');
+                    throw new RuntimeException(sprintf("Text identified by '%d' has malformed BBCode snippet.", $id));
                 },
 
                 $text
