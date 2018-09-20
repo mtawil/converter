@@ -1,9 +1,9 @@
-[![Latest Stable Version](https://poser.pugx.org/3f/converter/v/stable.png)](https://packagist.org/packages/3f/converter)
-[![Latest Unstable Version](https://poser.pugx.org/3f/converter/v/unstable.png)](https://packagist.org/packages/3f/converter)
-[![Build Status](https://scrutinizer-ci.com/g/dedalozzo/converter/badges/build.png?b=master)](https://scrutinizer-ci.com/g/dedalozzo/converter/build-status/master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dedalozzo/converter/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dedalozzo/converter/?branch=master)
-[![License](https://poser.pugx.org/3f/converter/license.svg)](https://packagist.org/packages/3f/converter)
-[![Total Downloads](https://poser.pugx.org/3f/converter/downloads.png)](https://packagist.org/packages/3f/converter)
+[![Latest Stable Version](https://poser.pugx.org/mtawil/converter/v/stable.png)](https://packagist.org/packages/mtawil/converter)
+[![Latest Unstable Version](https://poser.pugx.org/mtawil/converter/v/unstable.png)](https://packagist.org/packages/mtawil/converter)
+[![Build Status](https://scrutinizer-ci.com/g/mtawil/converter/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mtawil/converter/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mtawil/converter/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mtawil/converter/?branch=master)
+[![License](https://poser.pugx.org/mtawil/converter/license.svg)](https://packagist.org/packages/mtawil/converter)
+[![Total Downloads](https://poser.pugx.org/mtawil/converter/downloads.png)](https://packagist.org/packages/mtawil/converter)
 
 
 Converter
@@ -39,17 +39,9 @@ Converter Installation
 ----------------------
 Once you have installed Composer, it's easy install Converter.
 
-1. Edit your `composer.json` file, adding Converter to the require section:
+Run the following command in your project root dir:
 ```sh
-{
-    "require": {
-        "3f/converter": "dev-master"
-    },
-}
-```
-2. Run the following command in your project root dir:
-```sh
-composer update
+composer require mtawil/converter
 ```
 
 
@@ -88,6 +80,8 @@ Requirements
 Authors
 -------
 Filippo F. Fadda - <filippo.fadda@programmazione.it> - <http://www.linkedin.com/in/filippofadda>
+
+[Mohammad @Taweel](https://twitter.com/mtawil7) - <https://www.linkedin.com/in/maltawil>
 
 
 License
