@@ -25,6 +25,17 @@ class BBCodeConverter extends Converter
      */
     protected $cleaners = [];
 
+    public function __construct(string $text = null, string $id = null)
+    {
+        parent::__construct($text, $id);
+
+        foreach (get_class_methods($this) as $method) {
+            if (preg_match('#^(remove|replace)[A-Z][a-z]+#', $method)) {
+                call_user_func([$this, $method]);
+            }
+        }
+    }
+
     public function addCleaner($name, $callback)
     {
         if (is_callable($callback)) {
@@ -37,12 +48,6 @@ class BBCodeConverter extends Converter
      */
     public function toMarkdown(string $text = null, $id = null)
     {
-        foreach (get_class_methods($this) as $method) {
-            if (preg_match('#^(remove|replace)[A-Z][a-z]+#', $method)) {
-                call_user_func([$this, $method]);
-            }
-        }
-
         if (is_null($text) && $this->text) {
             $text = $this->text;
         }
