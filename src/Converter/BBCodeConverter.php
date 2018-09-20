@@ -6,10 +6,12 @@
  * @details
  *
  * @author Filippo F. Fadda
- * @author Mohammad AlTaweel
+ * @author Mohammad @Taweel
  */
 
 namespace Converter;
+
+use RuntimeException;
 
 /**
  * @brief A rudimental converter that takes as input a BBCode formatted text and converts it to Markdown.
@@ -23,17 +25,6 @@ class BBCodeConverter extends Converter
      */
     protected $cleaners = [];
 
-    public function __construct(string $text)
-    {
-        parent::__construct($text);
-
-        foreach (get_class_methods($this) as $method) {
-            if (preg_match('#^(remove|replace)[A-Z][a-z]+#', $method)) {
-                call_user_func([$this, $method]);
-            }
-        }
-    }
-
     public function addCleaner($name, $callback)
     {
         if (is_callable($callback)) {
@@ -44,15 +35,33 @@ class BBCodeConverter extends Converter
     /**
      * @brief Converts the provided BBCode text to an equivalent Markdown text.
      */
-    public function toMarkdown()
+    public function toMarkdown(string $text = null, $id = null)
     {
-        foreach ($this->cleaners as $cleaner) {
-            if (is_callable($cleaner)) {
-                $this->text = $cleaner($this->text);
+        foreach (get_class_methods($this) as $method) {
+            if (preg_match('#^(remove|replace)[A-Z][a-z]+#', $method)) {
+                call_user_func([$this, $method]);
             }
         }
 
-        return $this->text;
+        if (is_null($text) && $this->text) {
+            $text = $this->text;
+        }
+
+        if ( ! $text) {
+            return $text;
+        }
+
+        if (is_null($id) && $this->id) {
+            $id = $this->id;
+        }
+
+        foreach ($this->cleaners as $cleaner) {
+            if (is_callable($cleaner)) {
+                $text = $cleaner($text, $id);
+            }
+        }
+
+        return $text;
     }
 
     /**
@@ -172,14 +181,14 @@ class BBCodeConverter extends Converter
      */
     protected function replaceLists()
     {
-        $this->cleaners['replaceLists'] = function ($text) {
+        $this->cleaners['replaceLists'] = function ($text, $id = null) {
             return preg_replace_callback('%\[list(?P<type>=1)?\](?P<items>[\W\D\w\s]*?)\[/list\]%iu',
-                function ($matches) {
+                function ($matches) use ($id) {
                     $buffer = '';
 
                     $list = preg_replace('/\s*$|^\s*/mu', '', $matches['items']);
                     if (is_null($list)) {
-                        throw new \RuntimeException('Text has malformed BBCode lists');
+                        throw new RuntimeException(sprintf("Text identified by '%d' has malformed BBCode lists", $id));
                     }
                     $items = preg_split('/\[\*\]/u', $list);
 
@@ -219,14 +228,14 @@ class BBCodeConverter extends Converter
      */
     protected function replaceUrls()
     {
-        $this->cleaners['replaceUrls'] = function ($text) {
+        $this->cleaners['replaceUrls'] = function ($text, $id = null) {
             return preg_replace_callback('%\[url\s*=\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\]\s]+))\s*(?:[^]\s]*)\]([\W\D\w\s]*?)\[/url\]%iu',
-                function ($matches) {
+                function ($matches) use ($id) {
                     if (isset($matches[1]) && isset($matches[2])) {
                         return '['.$matches[2].']('.$matches[1].')';
                     }
 
-                    throw new \RuntimeException('Text have malformed BBCode urls');
+                    throw new RuntimeException(sprintf("Text identified by '%d' has malformed BBCode urls", $id));
                 },
 
                 $text
@@ -239,14 +248,14 @@ class BBCodeConverter extends Converter
      */
     protected function replaceImages()
     {
-        $this->cleaners['replaceImages'] = function ($text) {
+        $this->cleaners['replaceImages'] = function ($text, $id = null) {
             return preg_replace_callback('%\[img\s*\]\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\]\s]+))\s*(?:[^]\s]*)\[/img\]%iu',
-                function ($matches) {
+                function ($matches) use ($id) {
                     if (isset($matches[1])) {
                         return PHP_EOL.'![]'.'('.$matches[1].')'.PHP_EOL;
                     }
 
-                    throw new \RuntimeException('Text have malformed BBCode images');
+                    throw new RuntimeException(sprintf("Text identified by '%d' have malformed BBCode images", $id));
                 },
 
                 $text
@@ -260,7 +269,7 @@ class BBCodeConverter extends Converter
      */
     protected function replaceQuotes()
     {
-        $this->cleaners['replaceQuotes'] = function ($text) {
+        $this->cleaners['replaceQuotes'] = function ($text, $id = null) {
             // Removes the inner quotes, leaving just one level.
             $text = preg_replace('~\G(?<!^)(?>(\[quote\b[^]]*](?>[^[]++|\[(?!/?quote)|(?1))*\[/quote])|(?<!\[)(?>[^[]++|\[(?!/?quote))+\K)|\[quote\b[^]]*]\K~i', '', $text);
 
@@ -276,9 +285,9 @@ class BBCodeConverter extends Converter
      */
     protected function replaceSnippets()
     {
-        $this->cleaners['replaceSnippets'] = function ($text) {
+        $this->cleaners['replaceSnippets'] = function ($text, $id = null) {
             return preg_replace_callback('%\[code\s*=?(?P<language>\w*)\](?P<snippet>[\W\D\w\s]*?)\[\/code\]%iu',
-                function ($matches) {
+                function ($matches) use ($id) {
                     if (isset($matches['snippet'])) {
                         $language = strtolower($matches['language']);
 
@@ -311,7 +320,7 @@ class BBCodeConverter extends Converter
                         return PHP_EOL.'```'.$language.PHP_EOL.trim($matches['snippet']).PHP_EOL.'```'.PHP_EOL;
                     }
 
-                    throw new \RuntimeException('Text has malformed BBCode snippet.');
+                    throw new RuntimeException('Text has malformed BBCode snippet.');
                 },
 
                 $text
