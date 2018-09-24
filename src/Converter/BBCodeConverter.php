@@ -241,7 +241,7 @@ class BBCodeConverter extends Converter
     protected function replaceUrls()
     {
         $this->cleaners['replaceUrls'] = function ($text, $id = null) {
-            return preg_replace_callback('%\[url\s*=\s*("(?:[^"]*")|\A[^\']*\Z|(?:[^\'">\]\s]+))\s*(?:[^]\s]*)\]([\W\D\w\s]*?)\[/url\]%iu',
+            return preg_replace_callback('%\[url\s*=\s*(?:"([^"]*)"|\A[^\']*\Z|(?:[^\'">\]\s]+))\s*(?:[^]\s]*)\]([\W\D\w\s]*?)\[/url\]%iu',
                 function ($matches) use ($id) {
                     if (isset($matches[1]) && isset($matches[2])) {
                         return '['.$matches[2].']('.$matches[1].')';
