@@ -62,7 +62,10 @@ class BBCodeConverter extends Converter
 
         foreach ($this->cleaners as $cleaner) {
             if (is_callable($cleaner)) {
-                $text = $cleaner($text, $id);
+                do {
+                    $oldText = $text;
+                    $text = $cleaner($text, $id);
+                } while ($oldText != $text);
             }
         }
 
