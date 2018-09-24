@@ -89,14 +89,18 @@ class BBCodeConverter extends Converter
     }
 
     /**
-     * @brief Removes BBCode size.
+     * @brief Replace BBCode size.
      */
-    protected function removeSize()
+    protected function replaceSize()
     {
-        $this->cleaners['removeSize'] = function ($text) {
-            return preg_replace_callback('%\[size=\d*\]([\W\D\w\s]*?)\[/size\]%iu',
+        $this->cleaners['replaceSize'] = function ($text) {
+            return preg_replace_callback('%\[size=(\d*)\]([\W\D\w\s]*?)\[/size\]%iu',
                 function ($matches) {
-                    return $matches[1];
+                    $size = min((int) $matches[1], 6);
+
+                    $multiplier = -1 * $size + 7;
+
+                    return str_repeat('#', $multiplier).' '.trim($matches[2]);
                 },
 
                 $text
